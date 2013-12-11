@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
@@ -13,10 +14,41 @@
             </ui:define>
 
             <ui:define name="content">
-                content
-                <h:form>
+                <h:form id="fm">
+                    <h:dataTable value="#{purchaseController.productList}" var="item">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputLabel value="名前"/>
+                            </f:facet>
+                            <h:outputText value="#{item.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputLabel value="金額"/>
+                            </f:facet>
+                            <h:outputText value="#{item.price}"/>
+                        </h:column>
+                        <h:column>
+                            <h:commandButton value="選択">
+                                <f:setPropertyActionListener value="#{item}" target="#{purchaseController.product}"/>
+                                <f:ajax render=":fm:pnlProduct"/>
+                            </h:commandButton>
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputText value="選択中"/>
+                    <h:panelGrid columns="2" id="pnlProduct">
+                        <h:outputLabel value="商品名"/>
+                        <h:outputText value="#{purchaseController.product.name}"/>
+                        <h:outputLabel value="金額"/>
+                        <h:outputText value="#{purchaseController.product.price}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3">
+                        <h:outputLabel for="txtAmount" value="個数"/>
+                        <h:inputText id="txtAmount" value="#{purchaseController.amount}"/>
+                        <h:message for="txtAmount"/>
+                    </h:panelGrid>
                     <h:commandButton id="btnBack" value="戻る" immediate="true" action="backtoaddress"/>
-                    <h:commandButton value="選択終了" action="gotopay"/>
+                    <h:commandButton value="選択終了" action="#{purchaseController.selectProduct()}"/>
                 </h:form>
             </ui:define>
 

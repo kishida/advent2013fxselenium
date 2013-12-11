@@ -63,7 +63,7 @@ public class PurchaseController implements Serializable{
     @AllArgsConstructor
     @Setter @Getter
     @EqualsAndHashCode(of = "name")
-    public class Product{
+    public static class Product{
         String name;
         int price;
     }
@@ -99,6 +99,15 @@ public class PurchaseController implements Serializable{
                     "IDとパスワードが一致しません", "IDとパスワードが一致しません"));
             return null;
         }
+    }
+    
+    public String selectProduct(){
+        if(product == null){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+            "商品を選択してください", "商品を選択してください"));
+            return null;
+        }
+        return "gotopay";
     }
     
     public void finish(){
