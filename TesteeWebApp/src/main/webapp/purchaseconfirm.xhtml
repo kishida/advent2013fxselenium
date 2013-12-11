@@ -13,7 +13,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h:form>
+                <h:form id="fm">
                     <h:panelGrid columns="2">
                         <h:outputLabel value="アカウント名" rendered="#{purchaseController.member}"/>
                         <h:outputText value="#{purchaseController.userName}" rendered="#{purchaseController.member}"/>
@@ -31,7 +31,7 @@
                         <h:outputText value="#{purchaseController.bankAccount}" rendered="#{!purchaseController.member}"/>
                     </h:panelGrid>
                     <h:commandButton value="戻る" action="backtopay"/>
-                    <h:commandButton value="完了" action="complete"/>
+                    <h:commandButton id="btnNext" value="完了" action="complete"/>
                 </h:form>
                     
             </ui:define>

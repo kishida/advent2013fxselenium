@@ -15,7 +15,7 @@
 
             <ui:define name="content">
                 <h:form id="fm">
-                    <h:dataTable value="#{purchaseController.productList}" var="item">
+                    <h:dataTable id="tblProduct" value="#{purchaseController.productList}" var="item">
                         <h:column>
                             <f:facet name="header">
                                 <h:outputLabel value="名前"/>
@@ -29,7 +29,7 @@
                             <h:outputText value="#{item.price}"/>
                         </h:column>
                         <h:column>
-                            <h:commandButton value="選択">
+                            <h:commandButton id="btnSelect" value="選択">
                                 <f:setPropertyActionListener value="#{item}" target="#{purchaseController.product}"/>
                                 <f:ajax render=":fm:pnlProduct"/>
                             </h:commandButton>
@@ -48,7 +48,7 @@
                         <h:message for="txtAmount"/>
                     </h:panelGrid>
                     <h:commandButton id="btnBack" value="戻る" immediate="true" action="backtoaddress"/>
-                    <h:commandButton value="選択終了" action="#{purchaseController.selectProduct()}"/>
+                    <h:commandButton id="btnNext" value="選択終了" action="#{purchaseController.selectProduct()}"/>
                 </h:form>
             </ui:define>
 
