@@ -1,5 +1,11 @@
 package kis.webtester;
 
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -9,8 +15,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -20,9 +24,13 @@ import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import static jdk.nashorn.internal.runtime.Debug.id;
+import javax.imageio.ImageIO;
+import jdk.nashorn.api.scripting.JSObject;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.html.HTMLButtonElement;
 import org.w3c.dom.html.HTMLElement;
+import org.w3c.dom.html.HTMLInputElement;
 
 /**
  * Hello world!
@@ -31,20 +39,42 @@ import org.w3c.dom.html.HTMLElement;
 public class MainView extends Application{
     public static void main( String... args ){
         setup(args);
-        load("http://localhost:8080/TesteeWebApp/");
         try {
-            Thread.sleep(500);
+            String path = "C:\\Users\\naoki\\Desktop\\fxadvent2013\\";
+            Thread.sleep(300);
+            load("http://localhost:8080/TesteeWebApp/");
+            Thread.sleep(300);
             HTMLElement elm = findByText("開始画面");
             System.out.println(elm);
-        } catch (InterruptedException ex) {
+            capture(path + "01index.png");
+            clickById("fm:btnStart");
+            Thread.sleep(300);
+            capture(path + "02start.png");
+            clickById("fm:btnLogin");
+            Thread.sleep(300);
+            setValueById("fm:txtUsername", "kishida");
+            setValueById("fm:txtPassword", "naoki");
+            capture(path + "03logininput.png");
+            clickById("fm:btnLogin");
+            Thread.sleep(300);
+            capture(path + "04loginfail.png");
+            setValueById("fm:txtPassword", "kishida");
+            clickById("fm:btnLogin");
+            Thread.sleep(300);
+            clickById("fm:tblProduct:1:btnSelect");
+            setValueById("fm:txtAmount", "4");
+            clickById("fm:btnNext");
+        } catch (Exception ex) {
         }
         
     }
 
     static WebEngine engine;
-
+    static Stage mainStage;
+    
     @Override
     public void start(Stage stage) throws Exception {
+        mainStage = stage;
         WebView wv = new WebView();
         engine = wv.getEngine();
         engine.getLoadWorker().stateProperty().addListener((ov, t, t1) -> {
@@ -53,7 +83,7 @@ public class MainView extends Application{
             }
         });
         
-        Scene scene = new Scene(wv, 600, 400);
+        Scene scene = new Scene(wv, 400, 400);
         
         stage.setTitle("Hello");
         stage.setScene(scene);
@@ -100,18 +130,30 @@ public class MainView extends Application{
         
     }
     
-    static <T, R> R withFx(T arg, BiConsumer<T, BlockingQueue<R>> cons){
-        final BlockingQueue<T> param = new LinkedBlockingQueue<>();
-        final BlockingQueue<R> ret = new LinkedBlockingQueue<>();
+    static Worker.State load(String arg){
+        final BlockingQueue<String> param = new LinkedBlockingQueue<>();
+        final BlockingQueue<Worker.State> ret = new LinkedBlockingQueue<>();
 
         Platform.runLater(() -> {
             try {
-                T u = param.take();
-                cons.accept(u, ret);
+                String u = param.take();
+                engine.load(u);
+                engine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>(){
+                    @Override
+                    public void changed(ObservableValue<? extends Worker.State> ov, Worker.State t, Worker.State t1) {
+                        try{
+                            if(t1.equals(Worker.State.SUCCEEDED) || t1.equals(Worker.State.FAILED) || t1.equals(Worker.State.CANCELLED)){
+                                ret.put(t1);
+                                engine.getLoadWorker().stateProperty().removeListener(this);
+                            }
+                        }catch(InterruptedException ex){
+                        }
+                    }
+                });
             } catch (InterruptedException ex) {
             }
         });
-        R take = null;
+        Worker.State take = null;
         try {
             param.put(arg);
             take = ret.take();
@@ -127,24 +169,6 @@ public class MainView extends Application{
     public static void shutdown(){
         Platform.runLater(() -> {
             Platform.exit();
-        });
-    }
-    
-    public static Worker.State load(String url){
-        return withFx(url, (u, ret) -> {
-            engine.load(u);
-            engine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>(){
-                @Override
-                public void changed(ObservableValue<? extends Worker.State> ov, Worker.State t, Worker.State t1) {
-                    try{
-                        if(t1.equals(Worker.State.SUCCEEDED) || t1.equals(Worker.State.FAILED) || t1.equals(Worker.State.CANCELLED)){
-                            ret.put(t1);
-                            engine.getLoadWorker().stateProperty().removeListener(this);
-                        }
-                    }catch(InterruptedException ex){
-                    }
-                }
-            });
         });
     }
     
@@ -164,5 +188,44 @@ public class MainView extends Application{
         return withRet(() -> {
             return findByTextImpl(engine.getDocument(), text);
         });
+    }
+    
+    public static void clickById(final String id){
+        withLatch(() -> {
+            Element elem = engine.getDocument().getElementById(id);
+            if(elem != null){
+                if(elem instanceof HTMLInputElement){
+                    ((HTMLInputElement)elem).click();
+                }else if(elem instanceof HTMLButtonElement){
+                    Object o = engine.executeScript(
+                            "var evt = document.createEvent('MouseEvents');"
+                            + "evt.initEvent('click', false, true);evt");
+                    ((JSObject)elem).call("dispatchEvent", o);
+                }
+            }
+        });
+    }
+
+    public static void setValueById(String id, String value){
+        withLatch(() -> {
+            Element elem = engine.getDocument().getElementById(id);
+            if (elem != null && elem instanceof HTMLInputElement) {
+                ((HTMLInputElement) elem).setValue(value);
+            }
+        });
+    }
+    
+    public static void capture(String filename){
+        try {
+            Rectangle rect = new Rectangle(
+                    (int)mainStage.getX(), 
+                    (int)mainStage.getY(), 
+                    (int)mainStage.getWidth(), 
+                    (int)mainStage.getHeight());
+            
+            BufferedImage img = new Robot().createScreenCapture(rect);
+            ImageIO.write(img, "png", new File(filename));
+        } catch (IOException | AWTException ex) {
+        }
     }
 }
