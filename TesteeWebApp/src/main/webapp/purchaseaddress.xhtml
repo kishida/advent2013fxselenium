@@ -15,8 +15,16 @@
             <ui:define name="content">
                 content
                 <h:form>
+                    <h:panelGrid columns="3">
+                        <h:outputLabel for="txtAddress" value="住所"/>
+                        <h:inputText id="txtAddress" value="#{purchaseController.address}"/>
+                        <h:message for="txtAddress"/>
+                        <h:outputLabel for="txtName" value="名前"/>
+                        <h:inputText id="txtName" value="#{purchaseController.shipName}"/>
+                        <h:message for="txtName"/>
+                    </h:panelGrid>
                     <h:commandButton id="btnBack" value="戻る" immediate="true" action="purchaseFlow"/>
-                    <h:commandButton value="商品選択" action="#{purchaseController.guest()}"/>
+                    <h:commandButton id="btnNext" value="商品選択" action="#{purchaseController.guest()}"/>
                 </h:form>
                     
             </ui:define>

@@ -33,11 +33,11 @@ public class PurchaseController implements Serializable{
     boolean member;
     
     @Setter @Getter
-    @NotNull
+    @NotNull @Size(min=1)
     String address;
     
     @Setter @Getter
-    @NotNull
+    @NotNull @Size(min=1)
     String shipName;
     
     @Setter @Getter

@@ -32,14 +32,13 @@ public class PurchaseFlowDef {
     public Flow defineFlow(@FlowBuilderParameter FlowBuilder builder){
         builder.initializer("#{purchaseController.initialize()}");
         builder.id("", flowId);
-        builder.returnNode("index").fromOutcome("/index");
         builder.viewNode(flowId, "/purchasestart").markAsStartNode();
         builder.viewNode("login", "/purchaselogin");
         builder.viewNode("address", "/purchaseaddress");
         builder.viewNode("product", "/purchaseproduct");
         builder.viewNode("payment", "/purchasepayment");
         builder.viewNode("confirm", "/purchaseconfirm");
-        builder.viewNode("complete", "/purchasecomplete");
+        builder.returnNode("complete").fromOutcome("/purchasecomplete");
         builder.switchNode("backtoaddress")
                 .defaultOutcome("address")
                 .switchCase()
