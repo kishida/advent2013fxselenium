@@ -13,8 +13,23 @@
             </ui:define>
 
             <ui:define name="content">
-                content
                 <h:form>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="アカウント名" rendered="#{purchaseController.member}"/>
+                        <h:outputText value="#{purchaseController.userName}" rendered="#{purchaseController.member}"/>
+                        <h:outputLabel value="住所" rendered="#{!purchaseController.member}"/>
+                        <h:outputText value="#{purchaseController.address}" rendered="#{!purchaseController.member}"/>
+                        <h:outputLabel value="名前" rendered="#{!purchaseController.member}"/>
+                        <h:outputText value="#{purchaseController.shipName}" rendered="#{!purchaseController.member}"/>
+                        <h:outputLabel value="商品名"/>
+                        <h:outputText value="#{purchaseController.product.name}"/>
+                        <h:outputLabel value="価格"/>
+                        <h:outputText value="#{purchaseController.product.price}"/>
+                        <h:outputLabel value="個数"/>
+                        <h:outputText value="#{purchaseController.amount}"/>
+                        <h:outputLabel value="口座" rendered="#{!purchaseController.member}"/>
+                        <h:outputText value="#{purchaseController.bankAccount}" rendered="#{!purchaseController.member}"/>
+                    </h:panelGrid>
                     <h:commandButton value="戻る" action="backtopay"/>
                     <h:commandButton value="完了" action="complete"/>
                 </h:form>
