@@ -40,6 +40,11 @@ public class PurchaseFlowDef {
         builder.viewNode("payment", "/purchasepayment");
         builder.viewNode("confirm", "/purchaseconfirm");
         builder.viewNode("complete", "/purchasecomplete");
+        builder.switchNode("backtoaddress")
+                .defaultOutcome("address")
+                .switchCase()
+                .condition("#{purchaseController.member}")
+                .fromOutcome("login");
         builder.switchNode("gotopay")
                 .defaultOutcome("payment")
                 .switchCase()

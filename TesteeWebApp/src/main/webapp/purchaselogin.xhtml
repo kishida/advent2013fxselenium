@@ -13,11 +13,17 @@
             </ui:define>
 
             <ui:define name="content">
-                content
                 <h:form>
-                    <h:inputText value="#{purchaseController.userName}"/>
-                    <h:inputSecret value="#{purchaseController.password}"/>
-                    <h:commandButton value="ログイン" action="#{purchaseController.login()}"/>
+                    <h:panelGrid columns="3">
+                        <h:outputLabel for="txtUsername" value="ユーザー名"/>
+                        <h:inputText id="txtUsername" value="#{purchaseController.userName}"/>
+                        <h:message for="txtUsername"/>
+                        <h:outputLabel for="txtPassword" value="パスワード"/>
+                        <h:inputSecret id="txtPassword" value="#{purchaseController.password}"/>
+                        <h:message for="txtPassword"/>
+                    </h:panelGrid>
+                    <h:commandButton id="btnBack" value="戻る" immediate="true" action="purchaseFlow"/>
+                    <h:commandButton id="btnLogin" value="ログイン" action="#{purchaseController.login()}"/>
                 </h:form>
             </ui:define>
 
