@@ -1,9 +1,10 @@
 advent2013fxselenium
 ====================
 
- JavaFXとSeleniumのAdvent Calendar2013です
+ JavaFXとSeleniumのAdvent Calendar2013です。
 
 JavaFXを使ってSeleniumっぽい動きをするアプリケーションを作ってみました。
 
-TesteeWebAppがテスト用Webアプリケーション
+TesteeWebAppがテスト用Webアプリケーション。
+
 WebTesterがSeleniumっぽいテストを行うアプリケーションです。
