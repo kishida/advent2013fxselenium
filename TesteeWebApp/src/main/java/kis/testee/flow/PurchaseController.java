@@ -56,6 +56,10 @@ public class PurchaseController implements Serializable{
     @Setter @Getter
     Product product;
     
+    @Setter @Getter
+    @NotNull @Size(min = 1, max=12)
+    String bankAccount;
+    
     @AllArgsConstructor
     @Setter @Getter
     @EqualsAndHashCode(of = "name")

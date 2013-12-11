@@ -13,9 +13,13 @@
             </ui:define>
 
             <ui:define name="content">
-                content
                 <h:form>
-                    <h:commandButton id="btnBack" value="戻る" action="product"/>
+                    <h:panelGrid columns="3">
+                        <h:outputLabel value="口座"/>
+                        <h:inputText id="txtBank" value="#{purchaseController.bankAccount}"/>
+                        <h:message for="txtBank"/>
+                    </h:panelGrid>
+                    <h:commandButton id="btnBack" value="戻る" immediate="true" action="product"/>
                     <h:commandButton value="確認" action="confirm"/>
                 </h:form>
             </ui:define>
